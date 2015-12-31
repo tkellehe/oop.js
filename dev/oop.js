@@ -7,7 +7,12 @@ function OOP(obj) {
 OOP.prototype.toValue  = function() { return this.VALUE.toValue() };
 OOP.prototype.toString = function() { return this.VALUE.toString() };
 
+function is_OOP(obj) { return obj instanceof OOP };
+
 function oop(obj) {
+    // If already an OOP then no need in wrapping.
+    if(is_OOP(obj)) return obj;
+    // Creates a new OOP that is used to wrap oop.js functionality around the object.
     return new OOP(obj);
 };
 
