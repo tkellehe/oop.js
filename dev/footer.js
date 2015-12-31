@@ -1,0 +1,1 @@
+})(this, Object.defineProperty);

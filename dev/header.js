@@ -1,0 +1,1 @@
+;(function(global, g_defProp){
