@@ -1,1 +1,1 @@
-;(function(global, g_defProp){
+;(function(global, g_defProp, g_create){

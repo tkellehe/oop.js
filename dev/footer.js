@@ -1,1 +1,1 @@
-})(this, Object.defineProperty);
+})(this, Object.defineProperty, Object.create);
