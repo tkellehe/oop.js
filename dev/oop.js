@@ -1,4 +1,6 @@
 ;
+// Create property __type__!!
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // START: OOP
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10,6 +12,8 @@
 function OOP() {
     if(!(this instanceof OOP)) THROW.OOPError("Must use OOP to create instances.");
 };
+
+register_type("OOP", OOP);
 
 // ===========================================================================================================
 // Static Functions
@@ -83,6 +87,14 @@ function add_tool(name, descriptor) {
     g_defProp(oop, name, descriptor);
     g_defProp(oop[name], "__descriptor__", {get: function() { return descriptor }});
 };
+
+var TYPES = {};
+
+function register_type(name, type) {
+    g_defProp(name, { value: type, enumerable: true });
+};
+
+add_tool("TYPES", { value: TYPES, enumerable: true });
 
 // Floods an object with all of the enumerated properties attached to oop.
 add_tool("FLOOD", { value: function(obj) {
