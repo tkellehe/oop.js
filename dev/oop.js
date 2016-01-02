@@ -68,7 +68,7 @@ function is_OOP(obj) { return obj instanceof OOP };
 function oop(obj) {
     // If already an OOP then no need in wrapping.
     if(is_OOP(obj)) return obj;
-    if(is_const(obj)) THROW.OOPError("Cannot wrap constant values."); // Can later make a CONST type...
+    if(!is_object(obj)) THROW.OOPError("Cannot wrap constant values."); // Can later make a CONST type...
     // Creates a new OOP that is used to wrap oop.js functionality around the object.
     var newOOP   = new OOP();
     newOOP.VALUE = obj;
@@ -86,9 +86,10 @@ function add_tool(name, descriptor) {
 
 // Floods an object with all of the enumerated properties attached to oop.
 add_tool("FLOOD", { value: function(obj) {
-    // Only will attach the properties if the obj is not const.
-    // Loops through each enumerable property and uses the descriptor attached to attach properly.
-    if(!is_const(obj)) for(var name in oop) g_defProp(obj, name, oop[name].__descriptor__);
+    // Only will attach the properties if the obj is not const and object.
+    // Loops through each enumerable property and uses the descriptor attached in order to attach properly.
+    if(!is_const(obj) && is_object(obj)) 
+        for(var name in oop) g_defProp(obj, name, oop[name].__descriptor__);
     return obj;
 }, enumerable: true});
 

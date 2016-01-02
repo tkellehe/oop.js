@@ -1,9 +1,11 @@
 ;
+// NOTES: Need to remove attaching NAMESPACE objects to __value__...
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // START: NAMESPACE
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inherit_to_from(NAMESPACE, OOP);
-function NAMESPACE(name) { this.NAME = name };
+function NAMESPACE() { };
 
 // ===========================================================================================================
 // Static Functions
@@ -66,29 +68,34 @@ NAMESPACE.def_to_proto("ATTACH", { value: function(name, value) {
 }, enumerable: true});
 
 NAMESPACE.def_to_proto("__make_namespace__", { value: function(name, container) {
-    return this.__value__[name] = new NAMESPACE().INIT(name, this, container);
+    if(is_NAMESPACE(container)) {
+        if(!this.__has__(name)) this.__value__[name] = container.__value__;
+        return container;
+    }
+    this.__value__[name] = container;
+    return new NAMESPACE().INIT(name, this, container);
 }});
 
 NAMESPACE.def_to_proto("MAKE_NAMESPACE", { value: function(name, container) {
+    if(!is_object(container)) container = {}; 
     return this.__make_namespace__(to_string(name), container);
 }, enumerable: true});
 
 NAMESPACE.def_to_proto("__namespace__", { value: function(name) {
     var result;
     if(is_string(name)) {
-        try   { result = this.__get__(name) }
+        try      { result = this.__get__(name) }
         catch(e) { result = this.__make_namespace__(name) }
     } else if(is_object(name)) {
-        result = this.__make_namespace__("undefined" + NAMESPACE.__next_id__++, name);
-    }
+        result = this.__make_namespace__("" + NAMESPACE.__next_id__++, name);
+    } else { result = {} }
     return result;
 }});
 
 NAMESPACE.def_to_proto("NAMESPACE", { value: function(name) {
+    if(is_NAMESPACE(name)) return name;
     var result = this.__namespace__(name);
-    // Only way that thr result could not be a namespace is if a property
-    // already stored was not captured in a namespace.
-    if(!is_NAMESPACE(result)) result = this.__make_namespace__(name, result);
+    if(!is_NAMESPACE(result)) result = this.__make_namespace__(to_string(name), result);
     return result; 
 }, enumerable: true})
 

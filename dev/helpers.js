@@ -71,7 +71,7 @@ function OOPError(message) {
 
 OOPError.prototype.toString = function() { return this.message };
 
-g_defProp(global, "OOPError", { value: OOPError });
+add_tool("OOPError", { value: OOPError, enumerable: true  });
 
 inherit_to_from(OOPNotFoundError, OOPError);
 function OOPNotFoundError(message) {
@@ -80,12 +80,14 @@ function OOPNotFoundError(message) {
    this.name = "OOPNotFoundError";
 };
 
-g_defProp(global, "OOPNotFoundError", { value: OOPError });
+add_tool("OOPNotFoundError", { value: OOPNotFoundError, enumerable: true });
 
 var THROW = { 
     'OOPError': function(message) { throw new OOPError(message) },
     'OOPNotFoundError': function(message) { throw new OOPNotFoundError(message) }
 };
+
+add_tool("THROW", { value: THROW, enumerable: true  });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // END: Error Helpers
