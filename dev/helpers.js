@@ -16,6 +16,14 @@ function is_infinite(obj)  { return obj === Infinity || obj === -Infinity };
 function is_const(obj)     { return !is_object(obj)   && !is_undefined(obj) &&
                                     !is_null(obj)     && !is_nan(obj)       &&
                                     !is_infinite(obj) };
+function is_string(obj)       { return obj instanceof String || typeof obj === "string" };
+// Only const strings typeof return "string".
+function is_const_string(obj) { return typeof obj === "string" };
+
+function has_own_property(obj, property) {
+    if(is_undefined(obj) || is_null(obj)) return false;
+    return hasOwnProperty.call(obj, property); 
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // END: "is" functions
@@ -24,10 +32,12 @@ function is_const(obj)     { return !is_object(obj)   && !is_undefined(obj) &&
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // START: "to" functions
 // -----------------------------------------------------------------------------------------------------------
-// Handle conversions to particular data types.
+// Handle conversions to particular data types or anything that can start with "to"...
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function to_bool(obj) { return !!obj };
+function to_string(obj) { return is_object(obj) ? obj.toString() : obj + "" };
+function to_value(obj) { return +obj };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // END: "to" functions
@@ -63,8 +73,18 @@ OOPError.prototype.toString = function() { return this.message };
 
 g_defProp(global, "OOPError", { value: OOPError });
 
+inherit_to_from(OOPNotFoundError, OOPError);
+function OOPNotFoundError(message) {
+   Error.captureStackTrace(this);
+   this.message = message;
+   this.name = "OOPNotFoundError";
+};
+
+g_defProp(global, "OOPNotFoundError", { value: OOPError });
+
 var THROW = { 
-    'OOPError': function(message) { throw new OOPError(message) }
+    'OOPError': function(message) { throw new OOPError(message) },
+    'OOPNotFoundError': function(message) { throw new OOPNotFoundError(message) }
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
