@@ -1,17 +1,18 @@
 ;
-// Create property __type__!!
+// Create property __type__!! Or better a __oop__...
+// PLace an __oop__ which will be used to help store namespace trees better...
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // START: OOP
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * The main wrapper object used by oop.js. 
- * Must be used with the new constructor or when the scope is an instance of OOP.
- */
-function OOP() {
-    if(!(this instanceof OOP)) THROW.OOPError("Must use OOP to create instances.");
+var TYPES = {};
+
+function register_type(name, type) {
+    g_defProp(TYPES, name, { value: type, enumerable: true });
 };
+
+function OOP() {};
 
 register_type("OOP", OOP);
 
@@ -19,11 +20,11 @@ register_type("OOP", OOP);
 // Static Functions
 // ===========================================================================================================
 
-g_defProp(OOP, "def_to_proto", { value: function(name, descriptor) {
+g_defProp(OOP, "inherit", { value: function(name, descriptor) {
     g_defProp(OOP.prototype, name, descriptor);
 }});
 
-g_defProp(OOP, "def_prop", { value: function(name, descriptor) {
+g_defProp(OOP, "def", { value: function(name, descriptor) {
     g_defProp(OOP, name, descriptor);
 }});
 
@@ -31,22 +32,25 @@ g_defProp(OOP, "def_prop", { value: function(name, descriptor) {
 // Inheritable and Instance Functions.
 // ===========================================================================================================
 
-OOP.def_to_proto("def_prop", { value: function(name, descriptor) {
+OOP.inherit("def", { value: function(name, descriptor) {
     g_defProp(this, name, descriptor);
     return this;
 }});
 
-OOP.def_to_proto("__value__", { writable:true });
+OOP.inherit("__value__", { writable:true });
 
-OOP.def_to_proto("VALUE", {
+OOP.inherit("VALUE", {
     get: function()  { return this.__value__ },
-    set: function(v) { this.__value__ = v },
+    set: function(v) { 
+        this.__value__ = v;
+        if(is_object(v)) v.__oop__ = this;
+    },
     enumerable: true
 });
 
-OOP.def_to_proto("__name__", { writable:true });
+OOP.inherit("__name__", { writable:true });
 
-OOP.def_to_proto("NAME", {
+OOP.inherit("NAME", {
     get: function()  { return this.__name__ },
     set: function(v) { if(is_string(v)) this.__name__ = v },
     enumerable: true
@@ -88,12 +92,6 @@ function add_tool(name, descriptor) {
     g_defProp(oop[name], "__descriptor__", {get: function() { return descriptor }});
 };
 
-var TYPES = {};
-
-function register_type(name, type) {
-    g_defProp(name, { value: type, enumerable: true });
-};
-
 add_tool("TYPES", { value: TYPES, enumerable: true });
 
 // Floods an object with all of the enumerated properties attached to oop.
@@ -103,6 +101,15 @@ add_tool("FLOOD", { value: function(obj) {
     if(!is_const(obj) && is_object(obj)) 
         for(var name in oop) g_defProp(obj, name, oop[name].__descriptor__);
     return obj;
+}, enumerable: true});
+
+// Removes the __oop__ handle attached to the objects.
+// (Needs to loop through each property and clean those as well...)
+add_tool("CLEAN", { value: function(obj) {
+    var result;
+    if(is_OOP(obj)) result = obj.VALUE;
+    delete result.__oop__;
+    return result;
 }, enumerable: true});
 
 g_defProp(oop, "VERSION", { value: "1.0.0" });

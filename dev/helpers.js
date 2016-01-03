@@ -49,8 +49,7 @@ function to_value(obj) { return +obj };
 // Basic assistance in forcing doing inheritance.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function inherit_to_from(child, parent) { child.prototype = g_create(parent.prototype); return child; };
-function inherit_from_to(parent, child) { child.prototype = g_create(parent.prototype); return child; };
+function extend(child, parent) { child.prototype = g_create(parent.prototype); return child; };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // END: "is" functions
@@ -62,7 +61,7 @@ function inherit_from_to(parent, child) { child.prototype = g_create(parent.prot
 // Basic helpers of throwing errors that are specific oop.js errors.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inherit_to_from(OOPError, Error);
+extend(OOPError, Error);
 function OOPError(message) {
    Error.captureStackTrace(this);
    this.message = message;
@@ -73,7 +72,7 @@ OOPError.prototype.toString = function() { return this.message };
 
 add_tool("OOPError", { value: OOPError, enumerable: true  });
 
-inherit_to_from(OOPNotFoundError, OOPError);
+extend(OOPNotFoundError, OOPError);
 function OOPNotFoundError(message) {
    Error.captureStackTrace(this);
    this.message = message;
