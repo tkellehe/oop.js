@@ -34,7 +34,7 @@ inherits from `Error`.
 #### THROW
 
 The `oop` function provides a property called `THROW`. This object contains functions 
-that take in message needed for a particular error then throws that error. `THROW` is used internally to
+that take in messages needed for a particular error then throws that error. `THROW` is used internally to
 `oop.js` when throwing errors. This object is provided in order to assist with any debugging problems
 you might run into to help determine any errors involving `oop.js`.
 
@@ -55,8 +55,8 @@ console.log(LIB.FLOOD === oop.FLOOD); // => true
 
 #### Checking Instances
 
-Since `oop.js` does not provide direct access to the classes used to create the wrapper objects, each wrapper type
-has a function attached to `oop` like the following: `oop.is_OOPCLASSNAME`. These return a boolean value
+To make it easier to check against classes `oop.js` provides each wrapper type
+with a function attached to `oop` like the following: `oop.is_OOPCLASSNAME`. These return a boolean value
 which is determined by taking the object passed in and checking using the `instanceof` operator.
 
-So, the `OOP` class has the function `oop.is_OOP`.
+For example, the `OOP` class has the function `oop.is_OOP`.
