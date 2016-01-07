@@ -19,6 +19,7 @@ function is_const(obj)     { return !is_object(obj)   && !is_undefined(obj) &&
 function is_string(obj)       { return obj instanceof String || typeof obj === "string" };
 // Only const strings typeof return "string".
 function is_const_string(obj) { return typeof obj === "string" };
+function is_not_usable(obj) { return is_undefined(obj) || is_null(obj) || is_infinite(obj) || is_nan(obj) };
 
 function has_own_property(obj, property) {
     if(is_undefined(obj) || is_null(obj)) return false;
