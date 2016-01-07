@@ -60,3 +60,79 @@ with a function attached to `oop` like the following: `oop.is_OOPCLASSNAME`. The
 which is determined by taking the object passed in and checking using the `instanceof` operator.
 
 For example, the `OOP` class has the function `oop.is_OOP`.
+
+`oop.js` does provide an object attached to `oop` called `TYPES`. This object contains a reference to 
+each function used to create the `OOP` instances.
+
+--
+
+#### CLEAN
+
+`oop.js` tries to not damage objects by adding a bunch of mess, but there is one thing that all objects wrapped will get and that is the property `__oop__`. This property stores a reference to the wrapper around the object.
+
+```javascript
+var myObject = {};
+oop(myObject);
+console.log(myObject.hasOwnProperty("__oop__")); // => true
+```
+
+In order to properly remove the `OOP` instance, __do not__ just use `delete` use the `oop.CLEAN` method. This will trace through the object removing any other components that might also have an `__oop__` property then the function will return the cleansed object.
+
+```javascript
+var myObject = {};
+oop(myObject);
+oop.CLEAN(myObject);
+console.log(myObject.hasOwnProperty("__oop__")); // => false
+```
+
+Also, the `CLEAN` function can take in `OOP` instances and will do the same for the `__value__` property and return the cleaned object.
+
+```javascript
+var myObject = {};
+var myOOP = oop(myObject);
+oop.CLEAN(myOOP);
+console.log(myObject.hasOwnProperty("__oop__")); // => false
+```
+
+--
+
+#### Creating OOP instances (BASICS)
+
+The `oop` function is the main source to creating `OOP` instances properly. All `OOP` classes use an init function to build themselves which is hidden by the `oop` function. But, this is just the basics. So, to create an `OOP` instance merely pass an object into 
+`oop`.
+
+```javascript
+var myObject = {};
+var myOOP = oop(myObject);
+```
+
+The first thing to point out is that all `OOP` instances have a property called `NAME` and `VALUE`. The `NAME` is not too important and can be set with a string. 
+
+```javascript
+var myObject = {};
+var myOOP = oop(myObject);
+myOOP.NAME = "Bob";
+console.log(myOOP.NAME); // => Bob
+```
+
+Now, the `VALUE` is the object stored within the `OOP` instance. 
+
+```javascript
+var myObject = {};
+var myOOP = oop(myObject);
+console.log(myOOP.VALUE === myObject); // => true
+```
+
+Setting this will attach the `__oop__` (which is `myOOP`) to the object set into it.
+
+```javascript
+var myObject = {};
+var myOOP = oop(myObject);
+var myObject2 = {};
+
+myOOP.VALUE = myObject2;
+
+console.log(myObject2 === myOOP.VALUE);           // => true
+console.log(myObject2.hasOwnProperty("__oop__")); // => true
+console.log(myObject2.__oop__ === myOOP);         // =? true
+```
