@@ -97,11 +97,11 @@ NAMESPACE.inherit("__namespace__", { value: function(name) {
     var result;
     if(is_string(name)) {
         try      { result = this.__get__(name) }
-        catch(e) { result = this.__make_namespace__(name) }
+        catch(e) { result = this.__make_namespace__(name, {}) }
     } else if(is_object(name)) {
         // If result already has an __oop__ that is a namespace return that.
-        result = is_NAMESPACE(result.__oop__) ? 
-            result.__oop__ :
+        result = is_NAMESPACE(name.__oop__) ? 
+            name.__oop__ :
             this.__make_namespace__("" + NAMESPACE.__next_id__++, name);
     } else { result = {} }
     return result;
@@ -110,7 +110,11 @@ NAMESPACE.inherit("__namespace__", { value: function(name) {
 NAMESPACE.inherit("NAMESPACE", { value: function(name) {
     if(is_NAMESPACE(name)) return name;
     var result = this.__namespace__(name);
-    if(!is_NAMESPACE(result)) result = this.__make_namespace__(to_string(name), result);
+    if(!is_NAMESPACE(result)) {
+        result = this.__make_namespace__(is_not_usable(name) ? 
+            "" + NAMESPACE.__next_id__++ : 
+            to_string(name), result);
+    }
     return result; 
 }, enumerable: true})
 
