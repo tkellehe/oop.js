@@ -43,7 +43,7 @@ OOP.inherit("VALUE", {
     get: function()  { return this.__value__ },
     set: function(v) { 
         this.__value__ = v;
-        if(is_object(v)) v.__oop__ = this;
+        if(is_object(v)) add__oop__(v, this);
     },
     enumerable: true
 });
@@ -77,6 +77,8 @@ function oop(obj) {
     // If already an OOP then no need in wrapping.
     if(is_OOP(obj)) return obj;
     if(!is_object(obj)) THROW.OOPError("Cannot wrap constant values."); // Can later make a CONST type...
+    // Will return the __oop__ if already has one.
+    if(has_own_property(obj, "__oop__") && is_OOP(obj.__oop__)) return obj.__oop__;
     // Creates a new OOP that is used to wrap oop.js functionality around the object.
     var newOOP   = new OOP();
     newOOP.VALUE = obj;
@@ -111,6 +113,10 @@ add_tool("CLEAN", { value: function(obj) {
     delete result.__oop__;
     return result;
 }, enumerable: true});
+
+function add__oop__(object, oop_instance) {
+    g_defProp(object, "__oop__", { value: oop_instance, configurable: true, writable: true});
+}
 
 g_defProp(oop, "VERSION", { value: "1.0.0" });
 

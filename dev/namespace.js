@@ -32,7 +32,7 @@ NAMESPACE.inherit("__init__", { value: function(name, namespace, container) {
     this.__name__             = name;
     this.__parent_namespace__ = namespace;
     this.__value__            = container;
-    this.__value__.__oop__    = this;
+    add__oop__(this.__value__, this);
     return this;
 }});
 
