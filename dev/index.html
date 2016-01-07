@@ -2,12 +2,32 @@
 
 <script src="linker.js" linker-file = "helpers.js"></script>
 
-<script src="linker.js" linker-file = "oop.js">
-//oop.CLASS("Parent").INHERIT("BASE").BODY(function(){});
-
-//oop.CLASS("Child").INHERIT("Parent").BODY(function() {});
-</script>
+<script src="linker.js" linker-file = "oop.js"></script>
 
 <script src="linker.js" linker-file = "namespace.js"></script>
 
 <script src="linker.js" linker-file = "footer.js" linker-end></script>
+
+<script>
+
+linker.oncomplete(function() {
+	var myObject = {};
+
+	var namespace0 = oop.NAMESPACE(),
+	    namespace1 = oop.NAMESPACE("MyNamespace"),
+	    namespace2 = oop.NAMESPACE(myObject),
+	    namespace3 = oop.NAMESPACE(namespace0),
+	    global     = oop.NAMESPACE("GLOBAL");
+
+	console.log("namespace0 === namespace3 =>", namespace0 === namespace3);
+
+	console.log("Properties of GLOBAL should be 3 namespaces.")
+	for(var namespace in global.VALUE) {
+		console.log("--Property attached to GLOBAL =>", namespace);
+		console.log("-----Direct access call =>", global.VALUE[namespace]);
+		console.log("-----GET function call =>", global.GET(namespace));
+		console.log("-----GET is the same stored inside GLOBAL =>",global.VALUE[namespace] === global.GET(namespace).VALUE);
+	}
+});
+
+</script>
