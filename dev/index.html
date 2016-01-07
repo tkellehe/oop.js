@@ -28,6 +28,14 @@ linker.oncomplete(function() {
 		console.log("-----GET function call =>", global.GET(namespace));
 		console.log("-----GET is the same stored inside GLOBAL =>",global.VALUE[namespace] === global.GET(namespace).VALUE);
 	}
+
+	global.ATTACH("global_prop", "This is it!");
+
+	console.log("Getting global_prop from subnamespace =>", namespace0.GET("global_prop"));
+
+	var namespace4 = namespace0.NAMESPACE();
+	console.log("Getting global_prop from subsubnamespace =>", namespace4.GET("global_prop"));
+
 });
 
 </script>
