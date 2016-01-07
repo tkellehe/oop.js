@@ -35,11 +35,15 @@ function _add_link(id, code) {
     _files_loaded[id] = code;
 };
 
+var _completed = false, _result;
+
 function _wrap_up() {
     var code = "";
     for(var i = _files_loaded.length; --i >= 0;)
         code = (_files_loaded[i] || "") + code;
-    return g_eval.call(global, code);
+    _result = g_eval.call(global, code);
+    _oncomplete(_result);
+    return _result;
 };
 
 function linker(tag) {
@@ -71,6 +75,15 @@ g_defProp(linker, "content", { get: function() {
 }});
 
 g_defProp(linker, "compile", { value: _wrap_up });
+
+var _oncomplete = function(){};
+
+g_defProp(linker, "oncomplete", { value: function(f) {
+    if(_completed)
+        _oncomplete(_result);
+    else
+        _oncomplete = f;
+}});
 
 // Check to see if this script has anything.
 linker(g_script);
