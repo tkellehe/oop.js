@@ -73,6 +73,8 @@ NAMESPACE.inherit("__attach__", { value: function(name, value) {
 }});
 
 NAMESPACE.inherit("ATTACH", { value: function(name, value) {
+    if(is_OOP(name))
+        return this.__attach__(name.__name__, name.__value__);
     if(is_OOP(value)) value = value.__value__;
     return this.__attach__(name, value)
 }, enumerable: true});
@@ -94,8 +96,9 @@ NAMESPACE.inherit("MAKE_NAMESPACE", { value: function(name, container) {
 NAMESPACE.inherit("__namespace__", { value: function(name) {
     var result;
     if(is_string(name)) {
-        try      { result = this.__get__(name) }
-        catch(e) { result = this.__make_namespace__(name, {}) }
+        if(!is_object(result = this.__value__[name])) result = {};
+        if(!is_NAMESPACE(result.__oop__))
+            result = this.__make_namespace__(name, result);
     } else if(is_object(name)) {
         // If result already has an __oop__ that is a namespace return that.
         result = is_NAMESPACE(name.__oop__) ? 
@@ -106,9 +109,14 @@ NAMESPACE.inherit("__namespace__", { value: function(name) {
 }});
 
 NAMESPACE.inherit("NAMESPACE", { value: function(name) {
-    if(is_NAMESPACE(name)) return name;
-    var result = this.__namespace__(name);
-    if(!is_NAMESPACE(result)) {
+    var result = (is_NAMESPACE(name) ? name : this.__namespace__(name));
+    if(is_NAMESPACE(result)) {
+        if(result.__parent_namespace__ !== this) {
+            result.__parent_namespace__ = this;
+            this.__attach__(result.__name__, result.__value__);
+        }
+    }
+    else {
         result = this.__make_namespace__(is_not_usable(name) ? 
             "" + NAMESPACE.__next_id__++ : 
             to_string(name), result);
@@ -139,7 +147,14 @@ add_tool("MAKE_NAMESPACE", { value: function (name, parent_namespace) {
 }, enumerable: true});
 
 add_tool("NAMESPACE", { value: function(name) {
-    if(name === "GLOBAL") return GLOBAL_NAMESPACE;
+    if(name === "GLOBAL") {
+        // Makes sure that there is still an object as the global scope.
+        if(!is_object(GLOBAL_NAMESPACE.VALUE)) GLOBAL_NAMESPACE.VALUE = {};
+        // Makes sure that if VALUE has been cleaned that __oop__ is still there.
+        if(!has_own_property(GLOBAL_NAMESPACE.__value__, "__oop__"))
+            add__oop__(GLOBAL_NAMESPACE, GLOBAL_NAMESPACE.VALUE);
+        return GLOBAL_NAMESPACE;
+    }
     return GLOBAL_NAMESPACE.NAMESPACE(name);
 }, enumerable: true });
 ;
