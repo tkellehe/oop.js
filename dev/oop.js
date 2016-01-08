@@ -39,6 +39,7 @@ OOP.inherit("def", { value: function(name, descriptor) {
 
 OOP.inherit("__value__", { writable:true });
 
+// NOTE: Possible memory leak if when __value__ gets changed that the old is not cleaned.
 OOP.inherit("VALUE", {
     get: function()  { return this.__value__ },
     set: function(v) { 
@@ -110,7 +111,11 @@ add_tool("FLOOD", { value: function(obj) {
 add_tool("CLEAN", { value: function(obj) {
     var result;
     if(is_OOP(obj)) result = obj.VALUE;
-    delete result.__oop__;
+    else            result = obj;
+    if(has_own_property(result, "__oop__")) {
+        delete result.__oop__;
+        for(var i in result) this.CLEAN(result[i]);
+    }
     return result;
 }, enumerable: true});
 
