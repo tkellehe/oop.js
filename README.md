@@ -76,7 +76,7 @@ oop(myObject);
 console.log(myObject.hasOwnProperty("__oop__")); // => true
 ```
 
-In order to properly remove the `OOP` instance, __do not__ just use `delete` use the `oop.CLEAN` method. This will trace through the object removing any other components that might also have an `__oop__` property then the function will return the cleansed object.
+In order to properly remove the `OOP` instance, do __not__ just use `delete` use the `oop.CLEAN` method. This will trace through the object removing any other components that might also have an `__oop__` property then the function will return the cleansed object.
 
 ```javascript
 var myObject = {};
@@ -126,13 +126,68 @@ console.log(myOOP.VALUE === myObject); // => true
 Setting this will attach the `__oop__` (which is `myOOP`) to the object set into it.
 
 ```javascript
-var myObject = {};
-var myOOP = oop(myObject);
+var myObject1 = {};
+var myOOP = oop(myObject1);
 var myObject2 = {};
 
 myOOP.VALUE = myObject2;
 
 console.log(myObject2 === myOOP.VALUE);           // => true
 console.log(myObject2.hasOwnProperty("__oop__")); // => true
-console.log(myObject2.__oop__ === myOOP);         // =? true
+console.log(myObject2.__oop__ === myOOP);         // => true
+```
+
+Now, what about `myObject1`'s reference to `myOOP`?
+
+```javascript
+console.log(myObject1.__oop__ === myOOP); // => true
+```
+
+Uh oh... This is where the `CLEAN` function comes in handy. `oop.js` does __not__ clean up these becuase this may destroy
+some object you were trying to maintain. So, it is __currently__ up to the user to clean this up.
+
+```javascript
+console.log(oop.CLEAN(myObject1).__oop__ === myOOP); // => false
+```
+
+--
+
+#### WARNING
+
+`OOP` wrappers will have properties like `__property__` and others like `PROPERTY`. Use `PROPERTY` not `__property__`. The `PROPERTY`
+is smarter than the other and will correct data coming in. The `__property__` is used internally and is faster than `PROPERTY`, but does not provide all of the checks that `PROPERTY` provides.
+
+For example:
+
+```javascript
+var myObject1 = {};
+var myOOP = oop(myObject1);
+var myObject2 = {};
+
+myOOP.__value__ = myObject2;
+
+console.log(myObject2 === myOOP.VALUE);           // => true
+console.log(myObject2.hasOwnProperty("__oop__")); // => false
+console.log(myObject2.__oop__ === myOOP);         // => false
+```
+
+What you did is directly access `__value__` rather than using the getter/setter that handled a lot of `OOP` stuff.
+
+----
+
+## NAMESPACE
+
+`NAMESPACE`s are the main work horse. They provide scoping capabilities through objects rather than through creating
+scoped functions.
+
+```javascript
+var myNamespace = oop.MAKE_NAMESPACE("myNamespace");
+```
+
+---
+
+#### MAKE_NAMESPACE
+
+```javascript
+oop.MAKE_NAMESPACE(String [, NAMESPACE ]);
 ```
