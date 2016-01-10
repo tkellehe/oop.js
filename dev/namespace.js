@@ -139,7 +139,7 @@ add_tool("is_NAMESPACE", { value: is_NAMESPACE, enumerable: true });
 
 var GLOBAL_NAMESPACE = new NAMESPACE().__init__("GLOBAL", undefined, {});
 
-g_defProp(global, "GLOBAL", { value: GLOBAL_NAMESPACE });
+//g_defProp(global, "GLOBAL", { value: GLOBAL_NAMESPACE });
 
 add_tool("MAKE_NAMESPACE", { value: function (name, parent_namespace) {
     if(!is_NAMESPACE(parent_namespace)) parent_namespace = GLOBAL_NAMESPACE;
