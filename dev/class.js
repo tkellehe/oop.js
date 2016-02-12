@@ -23,13 +23,16 @@ g_defProp(CLASS, "def", { value: function(name, descriptor) {
 // ===========================================================================================================
 
 CLASS.inherit("__init__", { value: function(name, value) {
-    this.__name__             = name;
+    this.__name__ = name;
     add__oop__(this.__value__, this);
     return this;
 }});
 
 CLASS.inherit("INIT", { value: function(name, value) {
-    this.__init__(to_string(name), is_object(value) ? value : {});
+    // Private stuff needs to be created here as well as some of the other stuff for CLASS!
+    this.__init__(name = to_string(name), is_function(value) ? value : function(){});
+
+    // I have got a lot to figure out for this one...
 }, enumerable: true });
 
 // ===========================================================================================================
